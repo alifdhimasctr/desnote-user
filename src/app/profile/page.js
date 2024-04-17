@@ -39,7 +39,7 @@ return (
                         alt="profile"
                     />
                     <div className="flex flex-col">
-                        <h1 className="text-2xl font-semibold">{data.name}</h1>
+                        <h1 className="text-2xl font-semibold">{data?.name}</h1>
                         <p className="text-gray-500">{data.role} {department.departmentName}</p>
                     </div>
                 </div>

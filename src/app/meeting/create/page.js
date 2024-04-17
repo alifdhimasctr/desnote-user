@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Flowbite } from "flowbite-react";
 import Select from "react-select";
-import Header from "../header/header";
+import Header from "../../header/header";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { Router, useRouter } from "next/navigation";

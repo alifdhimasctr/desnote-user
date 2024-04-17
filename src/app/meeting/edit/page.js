@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, use, useRef } from "react";
-import Header from "../header/header";
+import Header from "../../header/header";
 import Modal from "../component/modal";
 import axios from "axios";
 import { useCookies } from "react-cookie";
