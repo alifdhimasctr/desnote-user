@@ -5,6 +5,7 @@ import { Flowbite } from "flowbite-react";
 import Header from "../header/header";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import Link from "next/link";
 
 export default function page() {
 
@@ -18,12 +19,13 @@ export default function page() {
   const [todayMeetData, setTodayMeetData] = useState([]);
   const [upcomingMeetData, setUpcomingMeetData] = useState([]);
   const [finishedMeetData, setFinishedMeetData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTodayMeet = async () => {
       const response = await axios.get(
         process.env.NEXT_PUBLIC_BASE_URL +
-          `/meet/findAllMeet?sort=desc&sortBy=meetDate&page=1&limit=10&startDate=${todayDate}&endDate=${tomorrowDate}`,
+          `/meet/findAllMeet?sort=desc&sortBy=meetDate&page=1&limit=1000&startDate=${todayDate}&endDate=${tomorrowDate}`,
         {
           headers: {
             Authorization: `Bearer ${token[0].token}`,
@@ -32,12 +34,14 @@ export default function page() {
       );
       console.log(response.data);
       setTodayMeetData(response.data.data);
+      setLoading(false);
     };
 
     const fetchUpcomingMeet = async () => {
+      setLoading(true);
       const response = await axios.get(
         process.env.NEXT_PUBLIC_BASE_URL +
-          `/meet/findAllMeet?sort=asc&sortBy=meetDate&page=1&limit=10&startDate=${tomorrowDate}&endDate=`,
+          `/meet/findAllMeet?sort=asc&sortBy=meetDate&page=1&limit=1000&startDate=${tomorrowDate}&endDate=`,
         {
           headers: {
             Authorization: `Bearer ${token[0].token}`,
@@ -46,12 +50,13 @@ export default function page() {
       );
       console.log(response.data);
       setUpcomingMeetData(response.data.data);
+      setLoading(false);
     };
 
     const fetchFinishedMeet = async () => {
       const response = await axios.get(
         process.env.NEXT_PUBLIC_BASE_URL +
-          `/meet/findAllMeet?sort=desc&sortBy=meetDate&page=1&limit=10&startDate=&endDate=${todayDate}`,
+          `/meet/findAllMeet?sort=desc&sortBy=meetDate&page=1&limit=1000&startDate=&endDate=${todayDate}`,
         {
           headers: {
             Authorization: `Bearer ${token[0].token}`,
@@ -60,6 +65,7 @@ export default function page() {
       );
       console.log(response.data);
       setFinishedMeetData(response.data.data);
+      setLoading(false);
     };
 
     fetchTodayMeet();
@@ -77,14 +83,25 @@ export default function page() {
               <a className="font-semibold text-left">Today's Meet</a>
             </div>
 
-            {todayMeetData.map((meet) => (
-              <div className="flex-col bg-gray-100 rounded-lg p-2 my-2">
-                <a className="font-semibold">{meet.meetTitle}</a>
-                <div className="text-[0.75rem] mt-1 text-gray-500">
-                  {new Date(meet.meetDate).toUTCString()}
+            {
+              loading ? (
+                <div className="flex-col bg-gray-100 rounded-lg p-2 my-2">
+                  <a className="font-semibold">Loading...</a>
                 </div>
-              </div>
-            ))}
+              ) : null
+            }
+
+            {todayMeetData.map((meet) => (
+                <Link href={`/meeting/edit?id=${meet.idMeet}`}>
+                  <div className="flex-col bg-gray-100 rounded-lg p-2 my-2 hover:bg-gray-200">
+                  <a className="font-semibold">{meet.meetTitle}</a>
+                  <div className="text-[0.75rem] mt-1 text-gray-500">
+                    {new Date(meet.meetDate).toString()}
+                  </div>
+                </div>
+                </Link>
+              )
+            )}
           </div>
 
           <div className="flex max-w-screen gap-4">
@@ -93,14 +110,19 @@ export default function page() {
                 <a className="font-semibold text-left">Upcoming Meet</a>
               </div>
 
-              {upcomingMeetData.map((meet) => (
-                <div className="flex-col bg-gray-100 rounded-lg p-2 my-2">
-                  <a className="font-semibold">{meet.meetTitle}</a>
-                  <div className="text-[0.75rem] mt-1 text-gray-500">
-                    {new Date(meet.meetDate).toUTCString()}
-                  </div>
-                </div>
-              ))}
+              {
+                upcomingMeetData.slice(0,10).map((meet) => (
+                  <Link href={`/meeting/edit?id=${meet.idMeet}`}>
+                    <div className="flex-col bg-gray-100 rounded-lg p-2 my-2 hover:bg-gray-200">
+                      <a className="font-semibold">{meet.meetTitle}</a>
+                      <div className="text-[0.75rem] mt-1 text-gray-500">
+                        {new Date(meet.meetDate).toString()}
+                      </div>
+                    </div>
+                  </Link>
+                ))
+              }
+
             </div>
 
             <div className="h-max min-w-96 w-1/2 p-4 flex-col gap-4 bg-white rounded-lg shadow-lg">
@@ -108,14 +130,18 @@ export default function page() {
                 <a className="font-semibold text-left">Finish Meet</a>
               </div>
 
-              {finishedMeetData.map((meet) => (
-                <div className="flex-col bg-gray-100 rounded-lg p-2 my-2">
-                  <a className="font-semibold">{meet.meetTitle}</a>
-                  <div className="text-[0.75rem] mt-1 text-gray-500">
-                    {new Date(meet.meetDate).toUTCString()}
-                  </div>
-                </div>
-              ))}
+              {
+                finishedMeetData.slice(0,10).map((meet) => (
+                  <Link href={`/meeting/edit?id=${meet.idMeet}`}>
+                    <div className="flex-col bg-gray-100 rounded-lg p-2 my-2 hover:bg-gray-200">
+                      <a className="font-semibold">{meet.meetTitle}</a>
+                      <div className="text-[0.75rem] mt-1 text-gray-500">
+                        {new Date(meet.meetDate).toString()}
+                      </div>
+                    </div>
+                  </Link>
+                ))
+              }
             </div>
           </div>
 
@@ -126,19 +152,26 @@ export default function page() {
               </div>
 
               <div className="flex bg-blue-200 justify-between align-middle rounded-lg p-2 my-2">
-                <a className="font-semibold text-xl self-center">Already</a>
-                <div className="text-3xl font-bold text-black">90</div>
+                <a className="font-semibold text-xl self-center">Today</a>
+                <div className="text-3xl font-bold text-black">
+                  {todayMeetData.length}
+                </div>
               </div>
 
               <div className="flex bg-yellow-200 justify-between align-middle rounded-lg p-2 my-2">
-                <a className="font-semibold text-xl self-center">Ongoing</a>
-                <div className="text-3xl font-bold text-black">67</div>
+                <a className="font-semibold text-xl self-center">Upcoming</a>
+                <div className="text-3xl font-bold text-black">
+                  {upcomingMeetData.length}
+                </div>
               </div>
 
               <div className="flex bg-green-200 justify-between align-middle rounded-lg p-2 my-2">
-                <a className="font-semibold text-xl self-center">Total</a>
-                <div className="text-3xl font-bold text-black">157</div>
+                <a className="font-semibold text-xl self-center">Finish</a>
+                <div className="text-3xl font-bold text-black">
+                  {finishedMeetData.length}
+                </div>
               </div>
+              
             </div>
 
             <div className="h-max min-w-96 w-3/4 p-4 flex-col gap-4 bg-white rounded-lg shadow-lg">
