@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useCookies } from "react-cookie";
 import { stringify } from "postcss";
 
+
 export default function Login() {
   const router = useRouter();
   const [username, setUsername] = useState("");
@@ -14,10 +15,12 @@ export default function Login() {
   const [errMsg, setErrMsg] = useState(null);
   const [token, setToken] = useCookies(["token"]);
   const [user, setUser] = useCookies(["user"]);
+  const [loading, setLoading] = useState(false);
   
 
 
   const handleLogin = async () => {
+    setLoading(true);
     try {
       const response = await axios.post(
         process.env.NEXT_PUBLIC_BASE_URL + "/login",
@@ -26,6 +29,7 @@ export default function Login() {
           password,
         },
       );
+
 
       if (response.status === 201) {
         setToken("token", response.data.data.token,{
@@ -48,6 +52,7 @@ export default function Login() {
     } catch (error) {
       console.log(error.response.data.message, "ini error");
       toast.error("Username & Password tidak sesuai");
+      setLoading(false);
     }
   };
 
@@ -89,14 +94,24 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            {errMsg && <p className="text-red-500 text-xs italic">{errMsg}</p>}
             <div className="flex items-center justify-between">
-              <input
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                type="submit"
-                // onClick={(e) => e.preventDefault()}
-                value="Sign in"
-              />
+              {loading ? (
+                <button
+                  className="bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  type="button"
+                  disabled
+                >
+                  Sign In...
+                </button>
+              ) : (
+                <button
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  type="submit"
+                >
+                  Sign In
+                </button>
+              )  
+              }
             </div>
           </form>
         </div>

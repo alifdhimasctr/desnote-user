@@ -104,7 +104,9 @@ return (
                         <a className=" p-2 px-3 bg-green-400 w-max rounded text-white ">{data.status.toUpperCase()}</a>
                     </div>
                 </div>
-                <button className="bg-blue-500 text-white p-2 px-4 rounded-lg w-max self-center mt-4">EDIT PROFILE</button>
+                <button 
+                onClick={() => window.location.href = "/profile/edit"}
+                className="bg-blue-500 text-white p-2 px-4 rounded-lg w-max self-center mt-4">EDIT PROFILE</button>
             </div>
         </div>
     </div>
