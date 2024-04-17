@@ -66,6 +66,7 @@ export default function page() {
       console.log(response.data);
       setFinishedMeetData(response.data.data);
       setLoading(false);
+
     };
 
     fetchTodayMeet();
@@ -121,34 +122,34 @@ export default function page() {
               </div>
 
               {loading ? (
-                <div>
-                  <div className="flex animate-pulse flex-col bg-gray-100 rounded-lg p-2 gap-2 my-2">
-                    <div class="h-5 w-1/4 bg-gray-300 rounded"></div>
-                    <div class="h-4 w-1/12 bg-gray-300 rounded"></div>
-                  </div>
+              <div>
+                <div className="flex animate-pulse flex-col bg-gray-100 rounded-lg p-2 gap-2 my-2">
+                  <div class="h-5 w-1/4 bg-gray-300 rounded"></div>
+                  <div class="h-4 w-1/12 bg-gray-300 rounded"></div>
+                </div>
 
-                  <div className="flex animate-pulse flex-col bg-gray-100 rounded-lg p-2 gap-2 my-2">
-                    <div class="h-5 w-1/4 bg-gray-300 rounded"></div>
-                    <div class="h-4 w-1/12 bg-gray-300 rounded"></div>
-                  </div>
+                <div className="flex animate-pulse flex-col bg-gray-100 rounded-lg p-2 gap-2 my-2">
+                  <div class="h-5 w-1/4 bg-gray-300 rounded"></div>
+                  <div class="h-4 w-1/12 bg-gray-300 rounded"></div>
+                </div>
 
-                  <div className="flex animate-pulse flex-col bg-gray-100 rounded-lg p-2 gap-2 my-2">
-                    <div class="h-5 w-1/4 bg-gray-300 rounded"></div>
-                    <div class="h-4 w-1/12 bg-gray-300 rounded"></div>
+                <div className="flex animate-pulse flex-col bg-gray-100 rounded-lg p-2 gap-2 my-2">
+                  <div class="h-5 w-1/4 bg-gray-300 rounded"></div>
+                  <div class="h-4 w-1/12 bg-gray-300 rounded"></div>
+                </div>
+              </div>
+            ) : null}
+
+            {upcomingMeetData.slice(0,10).map((meet) => (
+              <Link href={`/meeting/edit?id=${meet.idMeet}`}>
+                <div className="flex-col bg-gray-100 rounded-lg p-2 my-2 hover:bg-gray-200">
+                  <a className="font-semibold">{meet.meetTitle}</a>
+                  <div className="text-[0.75rem] mt-1 text-gray-500">
+                    {new Date(meet.meetDate).toString()}
                   </div>
                 </div>
-              ) : null}
-
-              {upcomingMeetData.slice(0, 10).map((meet) => (
-                <Link href={`/meeting/edit?id=${meet.idMeet}`}>
-                  <div className="flex-col bg-gray-100 rounded-lg p-2 my-2 hover:bg-gray-200">
-                    <a className="font-semibold">{meet.meetTitle}</a>
-                    <div className="text-[0.75rem] mt-1 text-gray-500">
-                      {new Date(meet.meetDate).toString()}
-                    </div>
-                  </div>
-                </Link>
-              ))}
+              </Link>
+            ))}
             </div>
 
             <div className="h-max min-w-96 w-1/2 p-4 flex-col gap-4 bg-white rounded-lg shadow-lg">
@@ -157,34 +158,34 @@ export default function page() {
               </div>
 
               {loading ? (
-                <div>
-                  <div className="flex animate-pulse flex-col bg-gray-100 rounded-lg p-2 gap-2 my-2">
-                    <div class="h-5 w-1/4 bg-gray-300 rounded"></div>
-                    <div class="h-4 w-1/12 bg-gray-300 rounded"></div>
-                  </div>
+              <div>
+                <div className="flex animate-pulse flex-col bg-gray-100 rounded-lg p-2 gap-2 my-2">
+                  <div class="h-5 w-1/4 bg-gray-300 rounded"></div>
+                  <div class="h-4 w-1/12 bg-gray-300 rounded"></div>
+                </div>
 
-                  <div className="flex animate-pulse flex-col bg-gray-100 rounded-lg p-2 gap-2 my-2">
-                    <div class="h-5 w-1/4 bg-gray-300 rounded"></div>
-                    <div class="h-4 w-1/12 bg-gray-300 rounded"></div>
-                  </div>
+                <div className="flex animate-pulse flex-col bg-gray-100 rounded-lg p-2 gap-2 my-2">
+                  <div class="h-5 w-1/4 bg-gray-300 rounded"></div>
+                  <div class="h-4 w-1/12 bg-gray-300 rounded"></div>
+                </div>
 
-                  <div className="flex animate-pulse flex-col bg-gray-100 rounded-lg p-2 gap-2 my-2">
-                    <div class="h-5 w-1/4 bg-gray-300 rounded"></div>
-                    <div class="h-4 w-1/12 bg-gray-300 rounded"></div>
+                <div className="flex animate-pulse flex-col bg-gray-100 rounded-lg p-2 gap-2 my-2">
+                  <div class="h-5 w-1/4 bg-gray-300 rounded"></div>
+                  <div class="h-4 w-1/12 bg-gray-300 rounded"></div>
+                </div>
+              </div>
+            ) : null}
+
+            {finishedMeetData.slice(0,10).map((meet) => (
+              <Link href={`/meeting/edit?id=${meet.idMeet}`}>
+                <div className="flex-col bg-gray-100 rounded-lg p-2 my-2 hover:bg-gray-200">
+                  <a className="font-semibold">{meet.meetTitle}</a>
+                  <div className="text-[0.75rem] mt-1 text-gray-500">
+                    {new Date(meet.meetDate).toString()}
                   </div>
                 </div>
-              ) : null}
-
-              {finishedMeetData.slice(0, 10).map((meet) => (
-                <Link href={`/meeting/edit?id=${meet.idMeet}`}>
-                  <div className="flex-col bg-gray-100 rounded-lg p-2 my-2 hover:bg-gray-200">
-                    <a className="font-semibold">{meet.meetTitle}</a>
-                    <div className="text-[0.75rem] mt-1 text-gray-500">
-                      {new Date(meet.meetDate).toString()}
-                    </div>
-                  </div>
-                </Link>
-              ))}
+              </Link>
+            ))}
             </div>
           </div>
 

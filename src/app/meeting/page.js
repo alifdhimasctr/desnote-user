@@ -57,7 +57,7 @@ export default function Meet() {
             <div className='h-max min-w-96 w-full p-4 flex-col gap-4 bg-white rounded-lg shadow-lg'>
               <div className='grid grid-cols-2 gap-4'>
                 {meetData.map((meet) => (
-                  <div className='flex bg-gray-100 rounded-lg p-2 my-2 justify-between'>
+                  <div className='flex bg-gray-50 rounded-lg p-2 justify-between'>
                     <div className='flex flex-col justify-center'>
                       <a className='font-semibold text'>{meet.meetTitle}</a>
                       <div className='text-[0.75rem] mt-1 text-gray-500'>

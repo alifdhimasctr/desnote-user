@@ -16,7 +16,7 @@ function Header() {
           <img src="/DesNetLogo.png" class="h-14" alt="Flowbite Logo" />
         </a>
         <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-          <a href="/profile" className="text-sm mr-2  md:hover:text-blue-700 md:p-0 ">{data.name}</a>
+          <a href="/profile" className="text-sm mr-2  md:hover:text-blue-700 md:p-0 ">{data?.name}</a>
           <button
             type="button"
             class="flex text-sm rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
