@@ -39,7 +39,7 @@ return (
                         alt="profile"
                     />
                     <div className="flex flex-col">
-                        <h1 className="text-2xl font-semibold">{data.name}</h1>
+                        <h1 className="text-2xl font-semibold">{data?.name}</h1>
                         <p className="text-gray-500">{data.role} {department.departmentName}</p>
                     </div>
                 </div>
@@ -104,7 +104,9 @@ return (
                         <a className=" p-2 px-3 bg-green-400 w-max rounded text-white ">{data.status.toUpperCase()}</a>
                     </div>
                 </div>
-                <button className="bg-blue-500 text-white p-2 px-4 rounded-lg w-max self-center mt-4">EDIT PROFILE</button>
+                <button 
+                onClick={() => window.location.href = "/profile/edit"}
+                className="bg-blue-500 text-white p-2 px-4 rounded-lg w-max self-center mt-4">EDIT PROFILE</button>
             </div>
         </div>
     </div>

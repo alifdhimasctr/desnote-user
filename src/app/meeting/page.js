@@ -13,6 +13,7 @@ export default function Meet() {
   const router = useRouter();
   const token = useCookies(['token']);
   const data = useCookies(['user']);
+  const [loading, setLoading] = useState(false);
 
   const handleEdit = (id) => {
     router.push(`/meeting/edit?id=${id}`);
@@ -20,6 +21,7 @@ export default function Meet() {
 
   useEffect(() => {
     const fetchMeet = async () => {
+      setLoading(true);
       const response = await axios.get(
         process.env.NEXT_PUBLIC_BASE_URL +
           '/meet/findAllMeet?sort=desc&sortBy=meetDate&page=1&limit=100&startDate=&endDate=',
@@ -31,6 +33,7 @@ export default function Meet() {
       );
       console.log(response.data);
       setMeetData(response.data.data);
+      setLoading(false);
     };
 
     fetchMeet();
