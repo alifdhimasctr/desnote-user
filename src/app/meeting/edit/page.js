@@ -56,7 +56,7 @@ export default function EditMeet() {
       );
 
       await axios.patch(
-        process.env.NEXT_PUBLIC_BASE_URL + '/notulensi/update/' + idNotulensi,
+        process.env.NEXT_PUBLIC_BASE_URL + '/notulensi/update/' + id,
         {
           notulensiSignPIC: response.data?.data?.fileLink,
         },
@@ -77,37 +77,47 @@ export default function EditMeet() {
     }
   };
 
-  const handleSaveSignCust = (e) => {
+  const handleSaveSignPIC = async (e) => {
+    setIsLoading('pic');
     e.preventDefault();
 
-    const downloadImage = () => {
-      const svgelm = $svg.current?.svg?.cloneNode(true);
-      const clientWidth = $svg.current?.svg?.clientWidth;
-      const clientHeight = $svg.current?.svg?.clientHeight;
-      svgelm.removeAttribute('style');
-      svgelm.setAttribute('width', `${clientWidth}px`);
-      svgelm.setAttribute('height', `${clientHeight}px`);
-      svgelm.setAttribute('viewbox', `${clientWidth} ${clientHeight}`);
-      const data = new XMLSerializer().serializeToString(svgelm);
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const img = new Image();
-      img.onload = () => {
-        canvas.width = clientWidth || 0;
-        canvas.height = clientHeight || 0;
-        ctx?.drawImage(img, 0, 0);
-        const a = document.createElement('a');
-        a.download = 'signature.png';
-        a.href = canvas.toDataURL('image/png');
-      };
-      img.src = `data:image/svg+xml;base64,${window.btoa(
-        unescape(encodeURIComponent(data))
-      )}`;
+    const canvas = document.createElement('canvas');
 
-      setNotulensiSignCustomer(img.src);
-    };
+    try {
+      const fd = new window.FormData();
+      const blob = dataURLtoBlob(canvas.toDataURL('image/png'));
+      fd.append('file', blob, 'signature.png');
 
-    downloadImage();
+      const response = await axios.post(
+        process.env.NEXT_PUBLIC_BASE_URL + '/notulensi/uploadTTD',
+        fd,
+        {
+          headers: {
+            Authorization: `Bearer ${token[0].token}`,
+          },
+        }
+      );
+
+      await axios.patch(
+        process.env.NEXT_PUBLIC_BASE_URL + '/notulensi/update/' + id,
+        {
+          notulensiSignCust: response.data?.data?.fileLink,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token[0].token}`,
+          },
+        }
+      );
+
+      setNotulensiSignPIC(response.data.data);
+      toast.success('Unggah tanda tangan berhasil');
+      setIsLoading(null);
+    } catch (error) {
+      console.log(error);
+      toast.error(`Gagal unggah tanda tangan ${error}`);
+      setIsLoading(null);
+    }
   };
 
   const FetchMeetingById = async () => {
