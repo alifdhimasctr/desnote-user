@@ -16,6 +16,14 @@ export default function CreateMeet() {
   const data = useCookies(['user']);
   const router = useRouter();
 
+  const getCurrentDateISOString = () => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}T00:00`;
+  };
+
   const [personelData, setPersonelData] = useState([]);
   const [locationData, setLocationData] = useState([]);
 
@@ -70,7 +78,7 @@ export default function CreateMeet() {
     setIsLoading('file');
     try {
       const formData = new FormData();
-      formData.append('file', fileData[0]);
+      formData.append('file', fileData);
       const response = await axios.post(
         process.env.NEXT_PUBLIC_BASE_URL + '/uploadFile',
         formData,
@@ -181,6 +189,7 @@ export default function CreateMeet() {
                   name='meetingDate'
                   className='w-1/4 p-2 bg-white shadow-md rounded-lg'
                   required
+                  min={getCurrentDateISOString()}
                   onChange={(e) =>
                     setFormData({
                       ...formData,

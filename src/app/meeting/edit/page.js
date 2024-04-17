@@ -27,10 +27,11 @@ export default function EditMeet() {
   const [dokumentasi, setDokumentasi] = useState([]);
   const router = useRouter();
 
-  const [signCust, setSignCust] = useState('');
+  const [signCustomer, setSignCustomer] = useState('');
   const [signPIC, setSignPIC] = useState('');
 
-  const $svg = useRef(null);
+  const svgPic = useRef(null);
+  const svgCust = useRef(null);
 
   const [idNotulensi, setIdNotulensi] = useState('');
 
@@ -77,7 +78,7 @@ export default function EditMeet() {
     }
   };
 
-  const handleSaveSignPIC = async (e) => {
+  const handleSaveSignCustomer = async (e) => {
     setIsLoading('pic');
     e.preventDefault();
 
@@ -101,7 +102,7 @@ export default function EditMeet() {
       await axios.patch(
         process.env.NEXT_PUBLIC_BASE_URL + '/notulensi/update/' + id,
         {
-          notulensiSignCust: response.data?.data?.fileLink,
+          notulensiSignCustomer: response.data?.data?.fileLink,
         },
         {
           headers: {
@@ -110,7 +111,7 @@ export default function EditMeet() {
         }
       );
 
-      setNotulensiSignPIC(response.data.data);
+      setNotulensiSignCustomer(response.data.data);
       toast.success('Unggah tanda tangan berhasil');
       setIsLoading(null);
     } catch (error) {
@@ -213,7 +214,7 @@ export default function EditMeet() {
                   Tanda Tangan PIC
                 </label>
                 <Signature
-                  ref={$svg}
+                  ref={svgPic}
                   width={250}
                   height={125}
                   backgroundColor='white'
@@ -231,14 +232,14 @@ export default function EditMeet() {
                   Tanda Tangan Customer
                 </label>
                 <Signature
-                  ref={setSignCust}
+                  ref={svgCust}
                   width={250}
                   height={125}
                   backgroundColor='white'
                   penColor='black'
                 />
                 <button
-                  onClick={handleSaveSignCust}
+                  onClick={handleSaveSignCustomer}
                   className='bg-blue-500 hover:bg-blue-700 mt-2 text-white font-bold py-1 px-3 rounded'
                 >
                   Save
