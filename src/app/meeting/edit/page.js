@@ -37,6 +37,8 @@ export default function EditMeet() {
   const [idNotulensi, setIdNotulensi] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const [fileUrl, setFileUrl] = useState("");
+
   const handleSaveSignPIC = async (e) => {
     setIsLoading("pic");
     e.preventDefault();
@@ -124,8 +126,6 @@ export default function EditMeet() {
     }
   };
 
-
-
   // useEffect(() => {
   //   const FetchMeetingById = async () => {
   //     const response = await axios.get(
@@ -143,7 +143,6 @@ export default function EditMeet() {
   //   FetchMeetingById();
   // }, []);
 
-  
   // console.log(meetData);
   // const idNotulensis = meetData.notulensi[0].idNotulensi;
   // console.log(`idNotulensis`, idNotulensis);
@@ -164,27 +163,73 @@ export default function EditMeet() {
         setMeetData(response.data.data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching meeting by ID:', error);
-        setLoading(false); // Ensure loading state is set to false even if an error occurs
+        console.error("Error fetching meeting by ID:", error);
+        setLoading(false);
       }
     };
-  
+
     fetchMeetingById();
   }, []);
-  
-  console.log(meetData);
-  
-  // Check if meetData and meetData.notulensi exist before accessing properties
-  if (meetData && meetData.notulensi && meetData.notulensi.length > 0) {
-    const idNotulensis = meetData.notulensi[0].idNotulensi;
-    console.log(`idNotulensis`, idNotulensis);
-    const notulensi = meetData.notulensi;
-    // console.log(notulensi[0].idNotulensi);
-  } else {
-    console.log('No notulensi data available'); // Optional: Log a message if notulensi data is not available
-  }
-  
 
+  console.log(meetData);
+
+  useEffect(() => {
+    if (meetData && meetData.notulensi && meetData.notulensi.length > 0) {
+      const idNotulensis = meetData.notulensi[0].idNotulensi;
+      console.log(`idNotulensis`, idNotulensis);
+
+      const fetchNotulensiById = async () => {
+        try {
+          const response = await axios.get(
+            process.env.NEXT_PUBLIC_BASE_URL +
+              `/notulensi/findOne/${idNotulensis}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token[0].token}`,
+              },
+            }
+          );
+          setDetailNotulensi(response.data.data);
+          setLoading(false);
+        } catch (error) {
+          console.error("Error fetching notulensi by ID:", error);
+          setLoading(false);
+        }
+      };
+
+      const downloadNotulensi = async () => {
+        try {
+          const response = await axios.get(
+            process.env.NEXT_PUBLIC_BASE_URL +
+              `/notulensi/download/${idNotulensis}`,
+            {
+              responseType: "blob",
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token[0].token}`,
+              },
+            }
+          );
+
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          setFileUrl(url);
+
+          console.log(response.data);
+          setLoading(false);
+        } catch (error) {
+          console.error("Error fetching notulensi by ID:", error);
+          setLoading(false);
+        }
+      };
+
+      fetchNotulensiById();
+    } else {
+      console.log("No notulensi data available");
+    }
+  }, [meetData, token]);
+
+  console.log(detailNotulensi);
 
   const userData = meetData.users;
   const location = meetData.officeLocation;
@@ -324,6 +369,47 @@ export default function EditMeet() {
           </form>
         </div>
       );
+    } else if (meetData.status_code === 2) {
+      return (
+        <div className="flex flex-col gap-2 mt-4">
+          <div className="flex flex-col gap-2">
+            <a className="font-semibold">Notulensi</a>
+            <a>{detailNotulensi.notulensiContent}</a>
+          </div>
+          <div className="flex flex-row gap-2">
+            <div className="flex flex-col gap-2">
+              <a className="font-semibold">Tanda Tangan PIC</a>
+              <img
+                src={detailNotulensi.notulensiSignPIC}
+                className="h-32 w-64"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <a className="font-semibold">Tanda Tangan Customer</a>
+              <img
+                src={detailNotulensi.notulensiSignCust}
+                className="h-32 w-64"
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <a className="font-semibold">Dokumentasi</a>
+            <div className="flex flex-row gap-2">
+              {detailNotulensi.dokumentasi?.map((dok) => (
+                <img src={dok.fileLink} className="h-32 w-64" />
+              ))}
+            </div>
+          </div>
+
+          <div>
+            {fileUrl && (
+              <a href={fileUrl} download="Notulensi.pdf">
+                Download File
+              </a>
+            )}
+          </div>
+        </div>
+      );
     }
   }
 
@@ -350,32 +436,30 @@ export default function EditMeet() {
             </div>
           ) : (
             <div className="flex flex-col ">
-            <a className="font-bold text-xl mb-1 text-black">
-              {meetData.meetTitle}
-            </a>
-            <a className="text-sm text-gray-600">
-              {" "}
-              {new Date(meetData.meetDate).toLocaleDateString()}
-            </a>
-            <a className="text-sm text-gray-600">
-              {new Date(meetData.meetDate).toLocaleTimeString()}
-            </a>
-            <a className="font-semibold text-lg text-left">Personel</a>
-            {userData?.map((user) => (
-              <a className="text-sm text-gray-600">- {user.name}</a>
-            ))}
-            <a className="font-semibold text-lg text-left">Customer</a>
-            <a className="text-sm text-gray-600">{meetData.customerName}</a>
-            <a className="font-semibold text-lg text-left">Location</a>
-            <a className="text-sm text-gray-600">{location?.locationName}</a>
-            <a className="font-semibold text-lg text-left">Link Meet</a>
-            <a className="text-sm text-gray-600">{isNullMeetLink()}</a>
+              <a className="font-bold text-xl mb-1 text-black">
+                {meetData.meetTitle}
+              </a>
+              <a className="text-sm text-gray-600">
+                {" "}
+                {new Date(meetData.meetDate).toLocaleDateString()}
+              </a>
+              <a className="text-sm text-gray-600">
+                {new Date(meetData.meetDate).toLocaleTimeString()}
+              </a>
+              <a className="font-semibold text-lg text-left">Personel</a>
+              {userData?.map((user) => (
+                <a className="text-sm text-gray-600">- {user.name}</a>
+              ))}
+              <a className="font-semibold text-lg text-left">Customer</a>
+              <a className="text-sm text-gray-600">{meetData.customerName}</a>
+              <a className="font-semibold text-lg text-left">Location</a>
+              <a className="text-sm text-gray-600">{location?.locationName}</a>
+              <a className="font-semibold text-lg text-left">Link Meet</a>
+              <a className="text-sm text-gray-600">{isNullMeetLink()}</a>
 
-            {handleMeet()}
-          </div>
-
+              {handleMeet()}
+            </div>
           )}
-
         </div>
       </div>
     </div>
