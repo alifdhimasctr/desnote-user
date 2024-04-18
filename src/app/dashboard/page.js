@@ -37,7 +37,7 @@ export default function page() {
       setLoading(false);
     };
 
-    const fetchUpcomingMeet = async () => {
+    const fetchFinishedMeet = async () => {
       setLoading(true);
       const response = await axios.get(
         process.env.NEXT_PUBLIC_BASE_URL +
@@ -49,11 +49,11 @@ export default function page() {
         }
       );
       console.log(response.data);
-      setUpcomingMeetData(response.data.data);
+      setFinishedMeetData(response.data.data);
       setLoading(false);
     };
 
-    const fetchFinishedMeet = async () => {
+    const fetchUpcomingMeet = async () => {
       const response = await axios.get(
         process.env.NEXT_PUBLIC_BASE_URL +
           `/meet/findAllMeet?sort=desc&sortBy=meetDate&page=1&limit=1000&startDate=&endDate=${todayDate}`,
@@ -64,7 +64,7 @@ export default function page() {
         }
       );
       console.log(response.data);
-      setFinishedMeetData(response.data.data);
+      setUpcomingMeetData(response.data.data);
       setLoading(false);
     };
 

@@ -11,6 +11,7 @@ import { Router, useRouter } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
 import { toast } from 'react-toastify';
 
+
 export default function CreateMeet() {
   const token = useCookies(['token']);
   const data = useCookies(['user']);
@@ -75,16 +76,19 @@ export default function CreateMeet() {
 
   const handleFileUpload = async (e) => {
     e.preventDefault();
+    console.log(fileData, 'ini fileData')
     setIsLoading('file');
+    const fd = new FormData();
+    fd.append('files', fileData);
+
     try {
-      const formData = new FormData();
-      formData.append('file', fileData);
       const response = await axios.post(
         process.env.NEXT_PUBLIC_BASE_URL + '/uploadFile',
-        formData,
+        fd,
         {
           headers: {
             Authorization: `Bearer ${token[0].token}`,
+            'Content-Type': 'multipart/form-data',
           },
         }
       );
@@ -327,7 +331,6 @@ export default function CreateMeet() {
                     className='w-3/4 p-2 bg-white shadow-md rounded-lg'
                     required
                     onChange={(e) => setFileData(e.target.files)}
-                    multiple={false}
                   />
                   <button
                     className='p-2 px-3 bg-blue-500 text-white rounded-lg'
