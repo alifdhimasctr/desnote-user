@@ -6,13 +6,11 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 import Signature from "@uiw/react-signature";
 import dataURLtoBlob from "blueimp-canvas-to-blob";
-import modal from "../component/modal";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 
 import JoditEditor from "jodit-react";
-import { set } from "jodit/esm/core/helpers";
 
 export default function EditMeet() {
   const searchParams = useSearchParams();
@@ -22,15 +20,7 @@ export default function EditMeet() {
   const [meetData, setMeetData] = useState([]);
   const [detailNotulensi, setDetailNotulensi] = useState([]);
 
-  //show modal
-  const [showNotulensiModal, setShowNotulensiModal] = useState(false);
-  const [showPICModal, setShowPICModal] = useState(false);
-  const [showCustomerModal, setShowCustomerModal] = useState(false);
-  const [showDokumentasiModal, setShowDokumentasiModal] = useState(false);
-
   const editor = useRef(null);
-
-  const [file, setFile] = useState(null);
 
   const notulensiTitle = "Notulensi " + meetData.meetTitle;
   const [notulensiContent, setNotulensiContent] = useState("");
@@ -53,7 +43,6 @@ export default function EditMeet() {
 
   const [fileUrl, setFileUrl] = useState("");
 
-  //SAVE SIGNATURE PIC
   const handleSaveSignPIC = async (e) => {
     setIsLoading("pic");
     e.preventDefault();
@@ -76,7 +65,7 @@ export default function EditMeet() {
       );
 
       await axios.patch(
-        process.env.NEXT_PUBLIC_BASE_URL + "/notulensi/update/" + idNotulensi1,
+        process.env.NEXT_PUBLIC_BASE_URL + "/notulensi/update/" + id,
         {
           notulensiSignPIC: response.data?.data?.fileLink,
         },
@@ -91,7 +80,6 @@ export default function EditMeet() {
       console.log(response.data.data);
       toast.success("Unggah tanda tangan berhasil");
       setIsLoading(null);
-      setShowPICModal(false);
     } catch (error) {
       console.log(error);
       toast.error(`Gagal unggah tanda tangan ${error}`);
@@ -99,8 +87,7 @@ export default function EditMeet() {
     }
   };
 
-  //SAVE SIGNATURE CUSTOMER
-  const handleSaveSignCustomer = async (e) => {
+  const handleSaveSignCustomer = async (e) => { 
     setIsLoading("pic");
     e.preventDefault();
 
@@ -122,7 +109,7 @@ export default function EditMeet() {
       );
 
       await axios.patch(
-        process.env.NEXT_PUBLIC_BASE_URL + "/notulensi/update/" + idNotulensi1,
+        process.env.NEXT_PUBLIC_BASE_URL + "/notulensi/update/" + id,
         {
           notulensiSignCust: response.data?.data?.fileLink,
         },
@@ -136,13 +123,15 @@ export default function EditMeet() {
       setNotulensiSignCustomer(response.data.data);
       toast.success("Unggah tanda tangan berhasil");
       setIsLoading(null);
-      setShowCustomerModal(false);
     } catch (error) {
       console.log(error);
       toast.error(`Gagal unggah tanda tangan ${error}`);
       setIsLoading(null);
     }
   };
+
+  console.log(notulensiSignPIC);
+  console.log(notulensiSignCustomer);
 
   // useEffect(() => {
   //   const FetchMeetingById = async () => {
@@ -248,14 +237,13 @@ export default function EditMeet() {
   }, [meetData, token]);
 
   console.log(detailNotulensi);
-  const idNotulensi1 = detailNotulensi.idNotulensi;
 
   const userData = meetData.users;
   const location = meetData.officeLocation;
 
   const handleCreateNotulensi = async (e) => {
     e.preventDefault();
-    setIsLoading("create");
+    setIsLoading('create');
 
     const response = await axios.post(
       process.env.NEXT_PUBLIC_BASE_URL + "/notulensi/create-notulensi",
@@ -278,66 +266,15 @@ export default function EditMeet() {
     setIsLoading(null);
   };
 
-  const handleUpdateNotulensiContent = async (e) => {
+  const handleUpdateNotulensi = async (e) => {
     e.preventDefault();
-    setIsLoading("update");
 
     const response = await axios.patch(
-      process.env.NEXT_PUBLIC_BASE_URL + "/notulensi/update/" + idNotulensi1,
+      process.env.NEXT_PUBLIC_BASE_URL + "/notulensi/update/" + idNotulensi,
       {
         notulensiContent: notulensiContent,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token[0].token}`,
-        },
-      }
-    );
-    setIsLoading(null);
-    setShowNotulensiModal(false);
-  };
-
-  const handleUpdateDokumentasi = async (e) => {
-    e.preventDefault();
-    setIsLoading("update");
-
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      try {
-        const response = await axios.post(
-          process.env.NEXT_PUBLIC_BASE_URL + "/uploadFile",
-          formData,
-          {
-            headers: {
-              "content-type": "multipart/form-data",
-              Authorization: `Bearer ${token[0].token}`,
-            },
-          }
-        );
-        console.log(response.data.data[0]);
-        setDokumentasi((prev) => [
-          ...prev,
-          response.data.data[0].idFileContainer,
-        ]);
-        setIsLoading(null);
-        toast.success("Dokumentasi berhasil diunggah");
-
-      } catch (error) {
-        console.log(error);
-        toast.error("Gagal mengunggah dokumentasi");
-        setIsLoading(null);
-      }
-    }
-  };
-
-  const handleUpdateDokumentasi1 = async (e) => {
-    e.preventDefault();
-    setIsLoading("update");
-    const response = await axios.patch(
-      process.env.NEXT_PUBLIC_BASE_URL + "/notulensi/update/" + idNotulensi1,
-      {
+        notulensiSignPIC: notulensiSignPIC,
+        notulensiSignCust: notulensiSignCustomer,
         dokumentasi: dokumentasi,
       },
       {
@@ -346,31 +283,8 @@ export default function EditMeet() {
         },
       }
     );
-    setIsLoading(null);
-    setShowDokumentasiModal(false);
+    router.push("/meeting/edit?id=" + id);
   };
-
-  const handleEndMeet = async (e) => {
-    e.preventDefault();
-    setIsLoading("end");
-    const response = await axios.patch(
-      process.env.NEXT_PUBLIC_BASE_URL + "/meet/finish/" + id,
-      {
-        headers: {
-          Authorization: `Bearer ${token[0].token}`,
-        },
-      }
-    );
-    setIsLoading(null);
-  };
-  
-
-
-  console.log(idNotulensi1);
-  console.log(notulensiContent);
-  console.log(notulensiSignPIC);
-  console.log(notulensiSignCustomer);
-  console.log(dokumentasi);
 
   function handleMeet() {
     if (meetData.status_code === 0) {
@@ -385,83 +299,75 @@ export default function EditMeet() {
     } else if (meetData.status_code === 1) {
       return (
         <div className="flex flex-col gap-2 mt-4">
-          <div className="flex flex-col gap-2">
-            {detailNotulensi.notulensiContent === "" ? (
-              <button
-                onClick={() => setShowNotulensiModal(true)}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 rounded w-1/5"
-              >
-                Add Notulensi
-              </button>
-            ) : (
-              <div className="flex flex-col gap-2">
-                <button
-                  onClick={() => setShowNotulensiModal(true)}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 rounded w-1/5"
-                >
-                  Edit Notulensi
-                </button>
-                <a>{detailNotulensi.notulensiContent}</a>
-              </div>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-2">
-            {detailNotulensi.notulensiSignPIC === "" ? (
-              <button
-                onClick={() => setShowPICModal(true)}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 rounded w-1/5"
-              >
-                Tambahkan TTd PIC
-              </button>
-            ) : (
-              <div className="flex flex-col gap-2">
-                <a className="font-semibold">Tanda Tangan PIC</a>
-                <img
-                  src={detailNotulensi.notulensiSignPIC}
-                  className="h-32 w-64"
-                />
-              </div>
-            )}
-            {detailNotulensi.notulensiSignCust === "" ? (
-              <button
-                onClick={() => setShowCustomerModal(true)}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 rounded w-1/5"
-              >
-                Tambahkan TTd Customer
-              </button>
-            ) : (
-              <div className="flex flex-col gap-2">
-                <a className="font-semibold">Tanda Tangan Customer</a>
-                <img
-                  src={detailNotulensi.notulensiSignCust}
-                  className="h-32 w-64"
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <button
-              onClick={() => setShowDokumentasiModal(true)}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 rounded w-1/5"
-            >
-              Tambahkan Dokumentasi
-            </button>
-
-            <div className="grid grid-rows-2 gap-2">
-              {detailNotulensi.dokumentasi?.map((dok) => (
-                <img src={dok.fileLink} className="h-32" />
-              ))}
+            <div>
+              <label className="text-lg text-black font-bold">Notulensi</label>
+              
+              <JoditEditor
+                ref={editor}
+                value={notulensiContent}
+                tabIndex={1}
+                onBlur={(newContent) => setNotulensiContent(newContent)}
+                onChange={(newContent) => {}}
+              />
             </div>
-          </div>
-            <button
-              onClick={handleEndMeet}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              {isLoading === "end" ? "Loading..." : "End Meet"}
-            </button>
-          
+            <div className="flex flex-row gap-4 mb-16">
+              <div>
+                <label className="text-lg text-black font-bold">
+                  Tanda Tangan PIC
+                </label>
+                <Signature
+                  ref={svgPic}
+                  width={250}
+                  height={125}
+                  backgroundColor="white"
+                  penColor="black"
+                />
+                <button
+                  onClick={handleSaveSignPIC}
+                  className="bg-blue-500 hover:bg-blue-700 mt-2 text-white font-bold py-1 px-3 rounded"
+                >
+                  Save
+                </button>
+              </div>
+              <div>
+                <label className="text-lg text-black font-bold">
+                  Tanda Tangan Customer
+                </label>
+                <Signature
+                  ref={svgCust}
+                  width={250}
+                  height={125}
+                  backgroundColor="white"
+                  penColor="black"
+                />
+                <button
+                  onClick={handleSaveSignCustomer}
+                  className="bg-blue-500 hover:bg-blue-700 mt-2 text-white font-bold py-1 px-3 rounded"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-lg text-black font-bold">
+                Dokumentasi
+              </label>
+              <input
+                type="file"
+                onChange={(e) => setDokumentasi(e.target.files[0])}
+              />
+            </div>
+
+            <div className="flex flex-row gap-4">
+              <button
+                onClick={handleUpdateNotulensi}
+                className="bg-blue-500 hover:bg-blue-700 text-white w-1/5 font-bold py-2 px-4 rounded"
+              >
+                Save
+              </button>
+
+            </div>
         </div>
       );
     } else if (meetData.status_code === 2) {
@@ -496,16 +402,12 @@ export default function EditMeet() {
             </div>
           </div>
 
-
-
-
-
-          <button
-            // onClick={downloadNotulensi}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
+          <button 
+          onClick={
+           downloadNotulensi 
+          }className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Download Notulensi
-          </button>
+            </button>
         </div>
       );
     }
@@ -535,7 +437,7 @@ export default function EditMeet() {
           ) : (
             <div className="flex flex-col ">
               <a className="font-bold text-xl mb-1 text-black">
-                {notulensiTitle}
+                {meetData.meetTitle}
               </a>
               <a className="text-sm text-gray-600">
                 {" "}
@@ -544,11 +446,7 @@ export default function EditMeet() {
               <a className="text-sm text-gray-600">
                 {new Date(meetData.meetDate).toLocaleTimeString()}
               </a>
-              <a className="font-semibold text-lg text-left">Project</a>
-            <a className="text-sm text-gray-600">
-              {meetData.projectName}
-            </a>
-            <a className="font-semibold text-lg text-left">Personel</a>
+              <a className="font-semibold text-lg text-left">Personel</a>
               {userData?.map((user) => (
                 <a className="text-sm text-gray-600">- {user.name}</a>
               ))}
@@ -564,90 +462,6 @@ export default function EditMeet() {
           )}
         </div>
       </div>
-      <Modal
-        isVisible={showNotulensiModal}
-        onClose={() => setShowNotulensiModal(false)}
-      >
-        <div className="flex flex-col gap-4">
-          <JoditEditor
-            ref={editor}
-            value={notulensiContent}
-            tabIndex={1}
-            onBlur={(newContent) => setNotulensiContent(newContent)}
-            onChange={(newContent) => {}}
-          />
-        </div>
-
-        <button
-          onClick={handleUpdateNotulensiContent}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          {isLoading === "update" ? "Loading..." : "Save"}
-        </button>
-      </Modal>
-      <Modal isVisible={showPICModal} onClose={() => setShowPICModal(false)}>
-        <div className="flex flex-col gap-4">
-          <Signature
-            width={300}
-            height={200}
-            backgroundColor="white"
-            penColor="black"
-            ref={svgPic}
-          />
-          <button
-            onClick={handleSaveSignPIC}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            {isLoading === "pic" ? "Loading..." : "Save"}
-          </button>
-        </div>
-      </Modal>
-      <Modal
-        isVisible={showCustomerModal}
-        onClose={() => setShowCustomerModal(false)}
-      >
-        <div className="flex flex-col gap-4">
-          <Signature
-            width={300}
-            height={200}
-            backgroundColor="white"
-            penColor="black"
-            ref={svgCust}
-          />
-          <button
-            onClick={handleSaveSignCustomer}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            {isLoading === "pic" ? "Loading..." : "Save"}
-          </button>
-        </div>
-      </Modal>
-      <Modal
-        isVisible={showDokumentasiModal}
-        onClose={() => setShowDokumentasiModal(false)}
-      >
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-row gap-2">
-            <input
-              type="file"
-              onChange={(e) => setFile(e.target.files[0])}
-            />
-            <button
-              onClick={handleUpdateDokumentasi}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/5"
-            >
-              {isLoading === "update" ? "Loading..." : "Upload"}
-            </button>
-            </div>
-          <button
-            onClick={handleUpdateDokumentasi1}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            {isLoading === "update" ? "Loading..." : "Save"}
-          </button>
-        </div>
-
-      </Modal>
     </div>
   );
 }

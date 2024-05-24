@@ -133,9 +133,13 @@ export default function Meet() {
                               {new Date(meet.meetDate).toLocaleTimeString()}
                             </td>
                             <td className="py-2">
-                              {meet.officeLocation.locationName}
+                              {
+                                meet.offileLocation === null
+                                  ? meet.alternativeLocation
+                                  : meet.officeLocation?.locationName
+                              }
                             </td>
-                            <td className="py-2">
+                            <td className="py-2 ">
                               {meet.status_code === 0 && (
                                 <span className="bg-red-400 p-1 rounded text-white text-sm">
                                   Not Started
