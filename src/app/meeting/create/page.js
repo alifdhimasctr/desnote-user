@@ -30,6 +30,7 @@ export default function CreateMeet() {
 
   const [formData, setFormData] = useState({
     meetTitle: '',
+    projectName: '',
     meetDate: '',
     users: [],
     location: '',
@@ -44,7 +45,7 @@ export default function CreateMeet() {
   const [isLoading, setIsLoading] = useState(null);
 
   useEffect(() => {
-    const fetchPersonel = async () => {
+    const fetchPersonel = async () => { // show all user that avaiability is true
       const response = await axios.get(
         process.env.NEXT_PUBLIC_BASE_URL + '/admin/findAllUser',
         {
@@ -176,6 +177,26 @@ export default function CreateMeet() {
                   required
                   onChange={(e) =>
                     setFormData({ ...formData, meetTitle: e.target.value })
+                  }
+                />
+              </div>
+
+              <div>
+                <label
+                  for='projectName'
+                  className='font-semibold text-left ml-2'
+                >
+                  Project Name
+                </label>
+                <input
+                  type='text'
+                  id='projectName'
+                  name='projectName'
+                  placeholder='Project Name'
+                  className='w-full p-2 bg-white shadow-md rounded-lg'
+                  required
+                  onChange={(e) =>
+                    setFormData({ ...formData, projectName: e.target.value })
                   }
                 />
               </div>

@@ -117,6 +117,7 @@ export default function Login() {
         </div>
         <div className="p-8 flex items-center justify-center rounded-r-xl w-80 bg-blue-700 text-white">
           <div className="flex flex-col items-center">
+            <img src="/DesNetLogo.png" className="mb-4" />
             <h1 className="text-2xl font-semibold text-center mb-4">
               Welcome Back
             </h1>

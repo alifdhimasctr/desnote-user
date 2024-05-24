@@ -360,6 +360,10 @@ export default function EditMeet() {
             <a className="text-sm text-gray-600">
               {new Date(meetData.meetDate).toLocaleTimeString()}
             </a>
+            <a className="font-semibold text-lg text-left">Project</a>
+            <a className="text-sm text-gray-600">
+              {meetData.projectName}
+            </a>
             <a className="font-semibold text-lg text-left">Personel</a>
             {userData?.map((user) => (
               <a className="text-sm text-gray-600">- {user.name}</a>
