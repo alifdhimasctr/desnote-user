@@ -36,9 +36,20 @@ export default function page() {
   }, []);
 
   const event = meetData.map((meet) => {
+    let statusColor;
+    if (meet.status_code === 0) {
+      statusColor = "red";
+    } else if (meet.status_code === 1) {
+      statusColor = "orange";
+    } else if (meet.status_code === 2) {
+      statusColor = "green";
+    }
+
     return {
       title: meet.meetTitle,
       start: meet.meetDate,
+      url: `/meeting/edit?id=${meet.idMeet}`,
+      backgroundColor: statusColor,
     };
   });
 
