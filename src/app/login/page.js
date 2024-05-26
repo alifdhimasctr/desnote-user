@@ -114,7 +114,7 @@ export default function Login() {
         <div className="p-8 flex items-center justify-center rounded-r-xl w-80 bg-blue-700 text-white">
           <div className="flex flex-col items-center">
             <h1 className="text-2xl font-bold text-center mb-4">
-              DESNOTE
+              DesNote.
             </h1>
             <p className="text-white text-center">
               Sebuah Aplikasi Notulensi yang memudahkan dalam mencatat
