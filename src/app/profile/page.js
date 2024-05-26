@@ -28,7 +28,7 @@ export default function page() {
 
 
 return (
-    <div className="overflow-auto bg-gray-200">
+    <div className="overflow-auto bg-blue-50">
         <Header />
         <div className="min-h-screen">
             <div className="flex flex-col gap-2 p-10 m-10 mx-28 bg-white rounded-lg shadow-md min-w-max ">

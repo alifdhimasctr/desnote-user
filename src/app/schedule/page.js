@@ -56,7 +56,7 @@ export default function page() {
   console.log(event);
 
   return (
-    <div className="overflow-auto bg-gray-200">
+    <div className="overflow-auto bg-gray-50">
       <Header />
 
       {loading ? (

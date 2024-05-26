@@ -7,7 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { useCookies } from "react-cookie";
 import { stringify } from "postcss";
 
-
 export default function Login() {
   const router = useRouter();
   const [username, setUsername] = useState("");
@@ -16,8 +15,6 @@ export default function Login() {
   const [token, setToken] = useCookies(["token"]);
   const [user, setUser] = useCookies(["user"]);
   const [loading, setLoading] = useState(false);
-  
-
 
   const handleLogin = async () => {
     setLoading(true);
@@ -25,14 +22,13 @@ export default function Login() {
       const response = await axios.post(
         process.env.NEXT_PUBLIC_BASE_URL + "/login",
         {
-          identifier: username, 
+          identifier: username,
           password,
-        },
+        }
       );
 
-
       if (response.status === 201) {
-        setToken("token", response.data.data.token,{
+        setToken("token", response.data.data.token, {
           path: "/",
           maxAge: 1000000000,
           sameSite: true,
@@ -57,17 +53,18 @@ export default function Login() {
   };
 
   return (
-    <div className="bg-gray-200 w-full h-[100vh] flex items-center justify-center overflow-auto">
+    <div className="bg-blue-50 w-full h-[100vh] flex items-center justify-center overflow-auto">
       <div className="flex">
-        <div className="bg-white p-8 py-14 rounded-l-xl w-80">
-          <h1 className="text-2xl text-black font-semibold mb-4">Login</h1>
+        <div className="flex flex-col bg-white p-6 rounded-l-xl w-80">
+          <img src="/DesNetLogo.png" className="w-40 items-center justify-center mb-4 self-center" />
+          <h1 className="text-2xl text-black font-semibold mb-2">Login</h1>
           <form action={handleLogin}>
             <div className="mb-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
                 htmlFor="username"
               >
-                Username
+                E-mail
               </label>
               <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -110,19 +107,17 @@ export default function Login() {
                 >
                   Sign In
                 </button>
-              )  
-              }
+              )}
             </div>
           </form>
         </div>
         <div className="p-8 flex items-center justify-center rounded-r-xl w-80 bg-blue-700 text-white">
           <div className="flex flex-col items-center">
-            <img src="/DesNetLogo.png" className="mb-4" />
-            <h1 className="text-2xl font-semibold text-center mb-4">
-              Welcome Back
+            <h1 className="text-2xl font-bold text-center mb-4">
+              DESNOTE
             </h1>
             <p className="text-white text-center">
-              DesNet. Sebuah Aplikasi Notulensi yang memudahkan dalam mencatat
+              Sebuah Aplikasi Notulensi yang memudahkan dalam mencatat
               dan mengelola notulensi rapat.
             </p>
           </div>
