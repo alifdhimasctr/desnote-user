@@ -84,7 +84,7 @@ export default function Meet() {
           onClick={() => router.push("/meeting/create")}
           className="bg-blue-500 text-white p-1.5 hover:bg-blue-600 text-sm rounded-lg flex gap-1"
         >
-          <MdAssignmentAdd className="h-5"/>
+          <MdAssignmentAdd className="h-5" />
           <span>Add Meeting</span>
         </button>
       </div>
@@ -108,7 +108,10 @@ export default function Meet() {
                   {loading ? (
                     <tbody>
                       {[...Array(20)].map((_, index) => (
-                        <tr key={index} className="animate-pulse odd:bg-gray-100 even:bg-gray-200">
+                        <tr
+                          key={index}
+                          className="animate-pulse odd:bg-gray-100 even:bg-gray-200"
+                        >
                           <td className="py-1 text-gray-200 ">...........</td>
                           <td className="py-1 text-gray-200 ">...........</td>
                           <td className="py-1 text-gray-200 ">...........</td>
@@ -122,15 +125,30 @@ export default function Meet() {
                   ) : (
                     <tbody>
                       {meetData
-                        .filter((meet) =>
-                          meet.meetTitle
-                            .toLowerCase()
-                            .includes(search.toLowerCase())
-                        )
+                        .filter((meet) => {
+                          if (search === "") {
+                            return meet;
+                          } else if (
+                            meet.meetTitle
+                              .toLowerCase()
+                              .includes(search.toLowerCase())
+                          ) {
+                            return meet;
+                          } else if (
+                            meet.projectName?.toLowerCase()
+                              .includes(search.toLowerCase())
+                          ) {
+                            return meet;
+                          }
+                        })
                         .map((meet) => (
                           <tr key={meet.idMeet} className=" even:bg-gray-100 ">
-                            <td className="text-sm py-1 text-left">{meet.meetTitle}</td>
-                            <td className="text-sm py-1 text-left">{meet.projectName}</td>
+                            <td className="text-sm py-1 text-left">
+                              {meet.meetTitle}
+                            </td>
+                            <td className="text-sm py-1 text-left">
+                              {meet.projectName}
+                            </td>
                             <td className="text-sm py-1 text-left">
                               {formatDate(meet.meetDate)}
                             </td>
@@ -138,12 +156,9 @@ export default function Meet() {
                               {new Date(meet.meetDate).toLocaleTimeString()}
                             </td>
                             <td className="text-sm py-1 text-left">
-                              {meet.officeLocation !== null?(
-                                meet.officeLocation
-                              ):(
-                                meet.alternativeLocation
-                                
-                              )}
+                              {meet.officeLocation !== null
+                                ? meet.officeLocation
+                                : meet.alternativeLocation}
                             </td>
                             <td className="text-sm py-1 text-left ">
                               {meet.status_code === 0 && (

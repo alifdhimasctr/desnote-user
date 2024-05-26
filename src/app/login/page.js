@@ -41,8 +41,15 @@ export default function Login() {
           sameSite: true,
         });
         console.log(response.data.data);
-        toast.success("Login Success");
-        router.push("/dashboard");
+        if (response.data.data.status === "Active") {
+          toast.success("Login Success");
+          router.push("/dashboard");
+        }
+        if(response.data.data.status === "Inactive") {
+          toast.error("Akun anda belum aktif");
+          setLoading(false);
+        }
+
       }
       setErrMsg(null);
     } catch (error) {
@@ -56,7 +63,10 @@ export default function Login() {
     <div className="bg-blue-50 w-full h-[100vh] flex items-center justify-center overflow-auto">
       <div className="flex">
         <div className="flex flex-col bg-white p-6 rounded-l-xl w-80">
-          <img src="/DesNetLogo.png" className="w-40 items-center justify-center mb-4 self-center" />
+          <img
+            src="/DesNetLogo.png"
+            className="w-40 items-center justify-center mb-4 self-center"
+          />
           <h1 className="text-2xl text-black font-semibold mb-2">Login</h1>
           <form action={handleLogin}>
             <div className="mb-4">
@@ -113,12 +123,10 @@ export default function Login() {
         </div>
         <div className="p-8 flex items-center justify-center rounded-r-xl w-80 bg-blue-700 text-white">
           <div className="flex flex-col items-center">
-            <h1 className="text-2xl font-bold text-center mb-4">
-              DesNote.
-            </h1>
+            <h1 className="text-2xl font-bold text-center mb-4">DesNote.</h1>
             <p className="text-white text-center">
-              Sebuah Aplikasi Notulensi yang memudahkan dalam mencatat
-              dan mengelola notulensi rapat.
+              Sebuah Aplikasi Notulensi yang memudahkan dalam mencatat dan
+              mengelola notulensi rapat.
             </p>
           </div>
         </div>

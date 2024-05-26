@@ -134,7 +134,7 @@ export default function page() {
         }
       );
       console.log(response.data);
-      const filteredData = response.data.data.filter(meet => meet.status_code === 1);
+      const filteredData = response.data.data.filter(meet => meet.status_code === 0);
       setUpcomingMeetData(filteredData);
       setLoading(false);
     };

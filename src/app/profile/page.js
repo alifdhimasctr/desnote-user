@@ -3,9 +3,10 @@ import React, {useEffect, useState} from "react";
 import { useCookies } from "react-cookie";
 import Header from "../header/header";
 import axios from "axios";
+import {Router, useRouter} from "next/navigation";
 
 export default function page() {
-
+    const router = useRouter();
     const [token, setToken] = useCookies(["token"]);
     const [user, setUser] = useCookies(["user"]);
     const [department, setDepartment] = useState("");
@@ -105,8 +106,8 @@ return (
                     </div>
                 </div>
                 <button 
-                onClick={() => window.location.href = "/profile/edit"}
-                className="bg-blue-500 text-white p-2 px-4 rounded-lg w-max self-center mt-4">EDIT PROFILE</button>
+                onClick={() => router.push("/login")}
+                className="bg-red-500 hover:bg-red-600 text-white p-2 text-sm rounded-md w-max self-center mt-4">Log Out</button>
             </div>
         </div>
     </div>

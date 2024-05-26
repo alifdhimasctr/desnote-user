@@ -291,9 +291,14 @@ export default function CreateMeet() {
                 id="location"
                 className="w-full p-1 px-3 bg-gray-50 rounded-sm"
                 required
-                onChange={(e) =>
-                  setFormData({ ...formData, location: e.target.value })
-                }
+                onChange={(e) =>{
+                  const value = e.target.value;
+                  if (value === "other") {
+                    setFormData({ ...formData, location: null });
+                  } else {
+                    setFormData({ ...formData, location: value });
+                  }
+                }}
               >
                 <option value={null} disabled selected>
                   Select
@@ -306,7 +311,7 @@ export default function CreateMeet() {
                     {loc.locationName}
                   </option>
                 ))}
-                <option value="">Other</option>
+                <option value="other">Other</option>
               </select>
             </div>
 
@@ -415,6 +420,7 @@ export default function CreateMeet() {
                 placeholder="Reminder"
                 className="w-1/4 p-1 bg-gray-50 rounded-sm"
                 required
+                min="1"
                 onChange={(e) =>
                   setFormData({ ...formData, meetReminder: e.target.value })
                 }

@@ -53,6 +53,7 @@ export default function EditMeet() {
   const createdBy = token[0].token;
   const meetIdMeet = id;
   const [dokumentasi, setDokumentasi] = useState([]);
+  const [namaDokumentasi, setNamaDokumentasi] = useState([]);
   const router = useRouter();
 
   const [signCustomer, setSignCustomer] = useState("");
@@ -311,6 +312,10 @@ export default function EditMeet() {
           ...prev,
           response.data.data[0].idFileContainer,
         ]);
+        setNamaDokumentasi((prev) => [
+          ...prev,
+          response.data.data[0].fileTitle,
+        ]);
         setIsLoading(null);
         toast.success("Dokumentasi berhasil diunggah");
       } catch (error) {
@@ -337,6 +342,7 @@ export default function EditMeet() {
     );
     setIsLoading(null);
     setShowDokumentasiModal(false);
+    toast.success("Dokumentasi berhasil disimpan");
   };
 
   const handleEndMeet = async (e) => {
@@ -373,6 +379,7 @@ export default function EditMeet() {
       }
     );
     setIsLoading(null);
+    toast.success("Notulensi berhasil diunduh");
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
     link.href = url;
@@ -406,13 +413,17 @@ export default function EditMeet() {
           <div className="flex flex-col gap-2">
             {detailNotulensi.notulensiContent === "" ? (
               <div className="flex flex-col gap-2">
-                <button
+                {detailNotulensi.notulensiSignPIC === "" || detailNotulensi.notulensiSignCust === "" ? (
+                  <button
                   onClick={() => setShowNotulensiModal(true)}
                   className="flex flex-row gap-1 bg-green-400 hover:bg-green-500 text-sm text-white w-max py-1 px-2 rounded-md align-middle"
                 >
                   <MdAssignmentAdd className="h-5 w-5 text-white" />
                   <a className="self-center">Add Notulensi</a>
                 </button>
+                ) : (
+                  null
+                )}
                 <div className="flex flex-col bg-gray-100 p-4 gap-2 w-full">
                   <div className="flex flex-col gap-2">
                     <a className="font-semibold text-sm">Notulensi</a>
@@ -422,19 +433,21 @@ export default function EditMeet() {
               </div>
             ) : (
               <div className="flex flex-col gap-2">
-                <button
+                {detailNotulensi.notulensiSignPIC === "" || detailNotulensi.notulensiSignCust === "" ? (
+                  <button
                   onClick={() => setShowNotulensiModal(true)}
                   className="flex flex-row gap-1 bg-blue-400 hover:bg-blue-500 text-sm text-white w-max py-1 px-2 rounded-md align-middle"
                 >
                   <MdAssignmentAdd className="h-5 w-5 text-white" />
                   <a className="self-center">Edit Notulensi</a>
                 </button>
+                ) : (
+                  null
+                )}
                 <div className="flex flex-col bg-gray-100 px-4 py-2 gap-2 w-full">
                   <div className="flex flex-col gap-2">
                     <a className="font-semibold text-sm">Notulensi</a>
-                    <a className="text-gray-600 text-sm">
-                      {detailNotulensi.notulensiContent}
-                    </a>
+                    <a className="text-gray-600 text-sm" dangerouslySetInnerHTML={{ __html: detailNotulensi.notulensiContent }}></a>
                   </div>
                 </div>
               </div>
@@ -516,32 +529,37 @@ export default function EditMeet() {
     } else if (meetData.status_code === 2) {
       return (
         <div className="flex flex-col gap-2 mt-4">
-          <div className="flex flex-col gap-2">
-            <a className="font-semibold">Notulensi</a>
-            <a>{detailNotulensi.notulensiContent}</a>
-          </div>
+          <div className="flex flex-col bg-gray-100 px-4 py-2 gap-2 w-full">
+                  <div className="flex flex-col gap-2">
+                    <a className="font-semibold text-sm">Notulensi</a>
+                    <a className="text-gray-600 text-sm" dangerouslySetInnerHTML={{ __html: detailNotulensi.notulensiContent }}></a>
+                  </div>
+                </div>
           <div className="flex flex-row gap-2">
             <div className="flex flex-col gap-2">
               <a className="font-semibold">Tanda Tangan PIC</a>
               <img
                 src={detailNotulensi.notulensiSignPIC}
-                className="h-32 w-64"
+                className="h-32 w-64 border-2 border-gray-200" 
               />
             </div>
             <div className="flex flex-col gap-2">
               <a className="font-semibold">Tanda Tangan Customer</a>
               <img
                 src={detailNotulensi.notulensiSignCust}
-                className="h-32 w-64"
+                className="h-32 w-64 border-2 border-gray-200"
               />
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <a className="font-semibold">Dokumentasi</a>
             <div className="flex flex-row gap-2">
-              {detailNotulensi.dokumentasi?.map((dok) => (
-                <img src={dok.fileLink} className="h-32" />
-              ))}
+            {detailNotulensi.dokumentasi?.map((dok) => (
+                    <img
+                      src={dok.fileLink}
+                      className="h-28 w-28 overflow-hidden rounded-lg border-2 border-gray-200"
+                    />
+                  ))}
             </div>
           </div>
 
@@ -549,7 +567,7 @@ export default function EditMeet() {
             onClick={handleDownload}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
-            Download Notulensi
+            {isLoading === "download" ? "Loading..." : "Download Notulensi"}
           </button>
         </div>
       );
@@ -571,11 +589,18 @@ export default function EditMeet() {
         <div className=" flex h-max min-w-96 w-screen p-4 flex-col gap-4 bg-white rounded-lg shadow-lg">
           {loading ? (
             <div className="flex flex-col animate-pulse gap-2">
-              <div className="h-8 w-52 bg-gray-200"></div>
-              <div className="h-4 w-36 bg-gray-200"></div>
-              <div className="h-4 w-36 bg-gray-200"></div>
-              <div className="h-4 w-36 bg-gray-200"></div>
-              <div className="h-4 w-36 bg-gray-200"></div>
+              <div className="h-10 w-52 bg-gray-200"></div>
+              <div className="h-6 w-36 bg-gray-200"></div>
+              <div className="h-6 w-36 bg-gray-200"></div>
+              <div className="h-6 w-36 bg-gray-200"></div>
+              <div className="h-6 w-36 bg-gray-200"></div>
+              <div className="h-6 w-36 bg-gray-200"></div>
+              <div className="h-6 w-36 bg-gray-200"></div>
+              <div className="h-6 w-36 bg-gray-200"></div>
+              <div className="h-6 w-36 bg-gray-200"></div>
+              <div className="h-6 w-36 bg-gray-200"></div>
+              <div className="h-6 w-36 bg-gray-200"></div>
+              
             </div>
           ) : (
             <div className="flex flex-col gap-2">
@@ -668,6 +693,12 @@ export default function EditMeet() {
         onClose={() => setShowNotulensiModal(false)}
       >
         <div className="flex flex-col gap-4">
+        {detailNotulensi.notulensiContent === "" ? (
+          <p className="font-semibold">Create Notulensi</p>
+        ) : (
+          <p className="font-semibold">Edit Notulensi</p>
+        
+        )}
           <JoditEditor
             ref={editor}
             value={notulensiContent}
@@ -689,6 +720,7 @@ export default function EditMeet() {
         onClose={() => setShowPICModal(false)}
       >
         <div className="flex flex-col gap-4">
+        <p className="font-semibold">Add PIC Sign</p>
           <div className="flex flex-row gap-2">
             <input type="file" className="w-full" onChange={(e) => setFilePIC(e.target.files[0])} />
             <button
@@ -705,6 +737,7 @@ export default function EditMeet() {
         onClose={() => setShowCustomerModal(false)}
       >
         <div className="flex flex-col gap-4">
+        <p className="font-semibold">Add Customer Sign</p>
           <div className="flex flex-row gap-2">
             <input type="file" className="w-full" onChange={(e) => setFileCustomer(e.target.files[0])} />
             <button
@@ -721,14 +754,22 @@ export default function EditMeet() {
         onClose={() => setShowDokumentasiModal(false)}
       >
         <div className="flex flex-col gap-4">
+          <p className="font-semibold">Upload Dokumentasi</p>
           <div className="flex flex-row gap-2">
-            <input type="file" className="w-full" onChange={(e) => setFile(e.target.files[0])} />
+            <input type="file" className="w-full bg-gray-100" onChange={(e) => setFile(e.target.files[0])} />
             <button
               onClick={handleUpdateDokumentasi}
               className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-4 rounded w-max"
             >
               {isLoading === "update" ? "Loading..." : "Upload"}
             </button>
+          </div>
+          <div className="flex flex-col gap-2">
+            {namaDokumentasi?.map((dok) => (
+              <div className="flex flex-row gap-2">
+                <a>{dok}</a>
+              </div>
+            ))}
           </div>
           <button
             onClick={handleUpdateDokumentasi1}
